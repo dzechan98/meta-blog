@@ -1,12 +1,16 @@
 import { cva } from 'class-variance-authority'
+import { ChangeEvent } from 'react'
 
 export interface IInputProps {
+    value?: string
     type?: string
-    name: string
-    error?: string
+    name?: string
+    error?: string | null
+    placeholder?: string
+    onBlur?: (event: ChangeEvent<HTMLInputElement>) => void
+    onChange?: (event: ChangeEvent<HTMLInputElement>) => void
     outline?: 'default' | 'primary'
     spacing?: 'default' | 'right'
-    placeholder?: string
     children?: React.ReactNode
 }
 
@@ -34,7 +38,7 @@ const Input = ({
     ...rest
 }: IInputProps) => {
     return (
-        <div className='relative w-full'>
+        <div className={`relative w-full ${error ? 'mb-4' : ''}`}>
             <input
                 id={name}
                 type={type}
@@ -43,7 +47,7 @@ const Input = ({
                 className={input({ spacing, outline })}
                 {...rest}
             />
-            {error && <span className='absolute left-0 bottom-6 text-red'>{error}</span>}
+            {error && <span className='absolute left-0 top-12 text-primary font-medium'>{error}</span>}
             {children && <div className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointe'>{children}</div>}
         </div>
     )

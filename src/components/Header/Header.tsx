@@ -3,6 +3,10 @@ import Input from '../Input'
 import Button from '../Button'
 import { IoIosSearch } from 'react-icons/io'
 import Logo from '../Logo'
+import { signOut } from 'firebase/auth'
+import { auth } from '../../config/firebase'
+import { useAuth } from '../../contexts/auth-context'
+import Avatar from '../Avatar'
 
 const menuHeader = [
     { key: 0, title: 'Home', path: '/' },
@@ -16,6 +20,12 @@ const notActive =
     'text-gray-500 hover:text-primary font-medium text-lg relative before:absolute before:w-0 before:-translate-x-1/2 before:left-1/2 before:h-[3px] before:-bottom-1 before:bg-primary before:transition-all before:rounded-lg hover:before:left-0 hover:before:translate-x-0 hover:before:w-full'
 
 const Header = () => {
+    const { userInfo } = useAuth()
+    console.log(userInfo)
+    const handleSignOut = (): any => {
+        signOut(auth)
+    }
+
     return (
         <header className='w-full'>
             <div className='container'>
@@ -39,9 +49,19 @@ const Header = () => {
                         <Input type='text' name='search-post' placeholder='Search posts...'>
                             <IoIosSearch size={25} />
                         </Input>
-                        <Button to='/sign-in' rounded='md'>
-                            Login
-                        </Button>
+                        {userInfo && (
+                            <div className='flex items-center gap-3'>
+                                <Avatar imageURL={userInfo.photoURL as string} />
+                                <Button rounded='md' onClick={handleSignOut}>
+                                    Sign Out
+                                </Button>
+                            </div>
+                        )}
+                        {!userInfo && (
+                            <Button to='/sign-in' rounded='md'>
+                                Login
+                            </Button>
+                        )}
                     </div>
                 </div>
             </div>

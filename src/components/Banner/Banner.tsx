@@ -1,9 +1,9 @@
-import React from 'react'
-
 const Banner = () => {
-  return (
-    <div>Banner</div>
-  )
+    return (
+        <div className=''>
+            <div className='container flex'></div>
+        </div>
+    )
 }
 
 export default Banner

@@ -1,8 +1,8 @@
-export interface IToggleIconsProps{
-     className?:string
-     onClick:()=>void
+export interface IToggleIconsProps {
+    className?: string
+    onClick: () => void
 }
-const IconEyeClose = ({ className = 'cursor-pointer', onClick = () => {} }:IToggleIconsProps) => {
+const IconEyeClose = ({ className = 'cursor-pointer', onClick = () => {} }: IToggleIconsProps) => {
     return (
         <span className={className} onClick={onClick}>
             <svg width='22' height='20' viewBox='0 0 22 20' fill='none' xmlns='http://www.w3.org/2000/svg'>
