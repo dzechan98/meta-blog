@@ -1,12 +1,12 @@
 import { NavLink } from 'react-router-dom'
-import Input from '../Input'
-import Button from '../Button'
+import Input from '../../common/Input'
+import Button from '../../common/Button'
 import { IoIosSearch } from 'react-icons/io'
-import Logo from '../Logo'
+import Logo from '../../common/Logo'
 import { signOut } from 'firebase/auth'
-import { auth } from '../../config/firebase'
-import { useAuth } from '../../contexts/auth-context'
-import Avatar from '../Avatar'
+import { auth } from '../../../config/firebase'
+import { useAuth } from '../../../contexts/auth-context'
+import Avatar from '../../common/Avatar'
 
 const menuHeader = [
     { key: 0, title: 'Home', path: '/' },

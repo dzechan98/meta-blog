@@ -1,5 +1,5 @@
 import { cva } from 'class-variance-authority'
-import logoImage from '../../assets/img/Logo.svg'
+import logoImage from '../../../assets/img/Logo.svg'
 import { NavLink } from 'react-router-dom'
 
 interface ILogoProps {

@@ -5,7 +5,7 @@ import Loading from '../Loading'
 interface IButtonProps {
     to?: string
     type?: 'button' | 'submit' | 'reset'
-    intent?: 'primary' | 'outline'
+    intent?: 'primary' | 'outline' | 'light'
     size?: 'small' | 'medium' | 'large'
     rounded?: 'sm' | 'md' | 'lg'
     loading?: boolean
@@ -33,6 +33,7 @@ const Button = ({
             variants: {
                 intent: {
                     primary: 'bg-gradient-to-r from-primary to-secondary text-white',
+                    light: 'bg-light text-primary',
                     outline: 'border-primary border text-primary'
                 },
                 size: {

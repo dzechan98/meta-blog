@@ -1,7 +1,7 @@
-import Button from '../Button'
-import Input from '../Input'
 import { AiOutlineMail } from 'react-icons/ai'
-import Logo from '../Logo'
+import Logo from '../../common/Logo'
+import Input from '../../common/Input'
+import Button from '../../common/Button'
 
 const Footer = () => {
     return (
@@ -58,10 +58,10 @@ const Footer = () => {
                         <p className='text-gray-dark'>© JS Template 2023. All Rights Reserved.</p>
                     </div>
                     <div className='flex items-center gap-6'>
-                        <span className='relative after:absolute after:w-[1px] after:h-full after:bg-gray-dark after:-right-3'>
+                        <span className='relative after:absolute after:w-[1px] after:h-full after:bg-gray-500 after:-right-3'>
                             Terms of Use
                         </span>
-                        <span className='relative after:absolute after:w-[1px] after:h-full after:bg-gray-dark after:-right-3'>
+                        <span className='relative after:absolute after:w-[1px] after:h-full after:bg-gray-500 after:-right-3'>
                             Privacy Policy
                         </span>
                         <span>Cookie Policy</span>
