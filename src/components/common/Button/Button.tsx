@@ -34,7 +34,8 @@ const Button = ({
                 intent: {
                     primary: 'bg-gradient-to-r from-primary to-secondary text-white',
                     light: 'bg-light text-primary',
-                    outline: 'border-primary border text-primary'
+                    outline:
+                        'shadow-lg shadow-primary border-primary border text-primary hover:bg-primary hover:text-light'
                 },
                 size: {
                     small: 'px-4 py-2 min-w-[100px]',

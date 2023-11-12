@@ -1,12 +1,10 @@
 import { NavLink } from 'react-router-dom'
-import Input from '../../common/Input'
 import Button from '../../common/Button'
-import { IoIosSearch } from 'react-icons/io'
 import Logo from '../../common/Logo'
-import { signOut } from 'firebase/auth'
-import { auth } from '../../../config/firebase'
 import { useAuth } from '../../../contexts/auth-context'
 import Avatar from '../../common/Avatar'
+import SearchInput from '../../common/SearchInput'
+import { getLastName, handleSignOut } from '../../../utils/fn'
 
 const menuHeader = [
     { key: 0, title: 'Home', path: '/' },
@@ -22,9 +20,6 @@ const notActive =
 const Header = () => {
     const { userInfo } = useAuth()
     console.log(userInfo)
-    const handleSignOut = (): any => {
-        signOut(auth)
-    }
 
     return (
         <header className='w-full'>
@@ -46,12 +41,13 @@ const Header = () => {
                         </ul>
                     </div>
                     <div className='flex items-center gap-x-4'>
-                        <Input type='text' name='search-post' placeholder='Search posts...'>
-                            <IoIosSearch size={25} />
-                        </Input>
+                        <SearchInput placeholder='Search posts...' />
                         {userInfo && (
                             <div className='flex items-center gap-3'>
-                                <Avatar imageURL={userInfo.photoURL as string} />
+                                <div className='flex items-center gap-1'>
+                                    <Avatar imageURL={userInfo?.photoURL as string} to='/dashboard/home' />
+                                    <h2 className='font-semibold'>Mr.{getLastName(userInfo.displayName as string)}</h2>
+                                </div>
                                 <Button rounded='md' onClick={handleSignOut}>
                                     Sign Out
                                 </Button>

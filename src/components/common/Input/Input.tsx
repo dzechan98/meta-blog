@@ -9,20 +9,22 @@ export interface IInputProps {
     placeholder?: string
     onBlur?: (event: ChangeEvent<HTMLInputElement>) => void
     onChange?: (event: ChangeEvent<HTMLInputElement>) => void
+    onClickIcons?: () => void
     outline?: 'default' | 'primary'
-    spacing?: 'default' | 'right'
+    position?: 'default' | 'right' | 'left'
     children?: React.ReactNode
 }
 
-const input = cva('w-full rounded-lg border focus:bg-white transition-all outline-none', {
+const input = cva('w-full py-2.5 rounded-lg border focus:bg-light transition-all outline-none', {
     variants: {
         outline: {
             primary: 'border-transparent focus:border-primary bg-gray-light',
             default: 'border-gray-light'
         },
-        spacing: {
-            default: 'px-5 py-2.5',
-            right: 'py-2.5 pl-4 pr-10'
+        position: {
+            default: 'px-4',
+            right: 'pl-4 pr-10',
+            left: 'pl-10 pr-4'
         }
     }
 })
@@ -32,8 +34,9 @@ const Input = ({
     name,
     error,
     outline = 'default',
-    spacing = 'default',
+    position = 'default',
     placeholder,
+    onClickIcons = () => {},
     children,
     ...rest
 }: IInputProps) => {
@@ -44,11 +47,20 @@ const Input = ({
                 type={type}
                 name={name}
                 placeholder={placeholder}
-                className={input({ spacing, outline })}
+                className={input({ position, outline })}
                 {...rest}
             />
             {error && <span className='absolute left-0 top-12 text-primary font-medium'>{error}</span>}
-            {children && <div className='absolute right-2.5 top-1/2 -translate-y-1/2 cursor-pointe'>{children}</div>}
+            {children && (
+                <div
+                    className={`cursor-pointer absolute top-1/2 -translate-y-1/2 ${
+                        position === 'right' || position === 'default' ? 'right-4' : 'left-4'
+                    }`}
+                    onClick={onClickIcons}
+                >
+                    {children}
+                </div>
+            )}
         </div>
     )
 }

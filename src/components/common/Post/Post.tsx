@@ -19,6 +19,7 @@ export interface IPostProps {
     sizeCategory?: 'base' | 'medium'
     lineCamp?: 'base' | 'medium'
     hidePostInfo?: boolean
+    backgroundColor?: 'dark' | 'light'
 }
 
 const post = cva('flex gap-4', {
@@ -29,6 +30,10 @@ const post = cva('flex gap-4', {
         direction: {
             row: 'flex-row',
             col: 'flex-col'
+        },
+        backgroundColor: {
+            dark: 'p-4 rounded-lg bg-dark',
+            light: 'p-4 rounde-lg bg-light'
         }
     }
 })
@@ -47,10 +52,11 @@ const Post = ({
     direction = 'col',
     sizeCategory = 'medium',
     lineCamp = 'medium',
-    hidePostInfo = false
+    hidePostInfo = false,
+    backgroundColor
 }: IPostProps) => {
     return (
-        <div className={post({ isBorder, direction })}>
+        <div className={post({ isBorder, direction, backgroundColor })}>
             <div className={`overflow-hidden flex-col rounded-md ${widthImage} ${heightImage}`}>
                 <PostImage imageURL={imageURL} className='hover:scale-110' />
             </div>
