@@ -10,6 +10,7 @@ import { useEffect } from 'react'
 import AddPostPage from './pages/AddPostPage'
 import { signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
+import MyPostPage from './pages/MyPostPage'
 
 function App() {
     useEffect(() => {
@@ -34,6 +35,7 @@ function App() {
             <Route path='/dashboard' element={<UserDashboardLayout />}>
                 <Route path='home' element={<DashboardPage />} />
                 <Route path='new-post' element={<AddPostPage />} />
+                <Route path='my-post' element={<MyPostPage />} />
             </Route>
         </Routes>
     )

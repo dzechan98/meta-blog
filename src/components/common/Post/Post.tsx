@@ -3,14 +3,16 @@ import PostTitle from '../PostTitle'
 import PostInfo from '../PostInfo'
 import PostImage from '../PostImage'
 import { cva } from 'class-variance-authority'
+import { GoTrash, BsEyeSlash, BiPencil } from '../../../utils/icons'
+import { useNavigate } from 'react-router-dom'
 
 export interface IPostProps {
     imageURL: string
-    category: string
+    categoryId: string
     title: string
     avatar: string
     author: string
-    date: Date
+    postId?: string
     isBorder?: boolean
     heightImage?: string
     widthImage?: string
@@ -20,9 +22,14 @@ export interface IPostProps {
     lineCamp?: 'base' | 'medium'
     hidePostInfo?: boolean
     backgroundColor?: 'dark' | 'light'
+    action?: boolean
+    createdAt: {
+        seconds: number
+    }
+    hideButtonLike?: boolean
 }
 
-const post = cva('flex gap-4', {
+const post = cva('flex gap-4 w-full', {
     variants: {
         isBorder: {
             true: 'p-4 rounded-lg border border-dark-light'
@@ -40,11 +47,10 @@ const post = cva('flex gap-4', {
 
 const Post = ({
     imageURL,
-    category,
+    categoryId,
     title,
     avatar,
     author,
-    date,
     heightImage = 'h-full',
     widthImage = 'w-full',
     isBorder = true,
@@ -53,21 +59,52 @@ const Post = ({
     sizeCategory = 'medium',
     lineCamp = 'medium',
     hidePostInfo = false,
-    backgroundColor
+    backgroundColor,
+    action = false,
+    postId,
+    createdAt,
+    hideButtonLike
 }: IPostProps) => {
+    const navigate = useNavigate()
     return (
         <div className={post({ isBorder, direction, backgroundColor })}>
-            <div className={`overflow-hidden flex-col rounded-md ${widthImage} ${heightImage}`}>
+            <div className={`overflow-hidden flex-shrink-0 rounded-md ${widthImage} ${heightImage}`}>
                 <PostImage imageURL={imageURL} className='hover:scale-110' />
             </div>
 
-            <div className='wrap'>
-                <Category size={sizeCategory}>{category}</Category>
+            <div className={''}>
+                <Category size={sizeCategory} categoryId={categoryId} />
                 <PostTitle size={sizeTitle} lineCamp={lineCamp}>
                     {title}
                 </PostTitle>
-                {!hidePostInfo && <PostInfo author={author} avatar={avatar} date={date} />}
+                {!hidePostInfo && (
+                    <PostInfo
+                        author={author}
+                        avatar={avatar}
+                        date={createdAt?.seconds}
+                        hideButtonLike={hideButtonLike}
+                    />
+                )}
             </div>
+            {action && (
+                <div className='flex items-center justify-center gap-2'>
+                    <span
+                        className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
+                        onClick={() => navigate(`/post/${postId}`)}
+                    >
+                        <BsEyeSlash size={25} />
+                    </span>
+                    <span
+                        className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
+                        onClick={() => navigate(`/dashboard/my-post/update/${postId}`)}
+                    >
+                        <BiPencil size={25} />
+                    </span>
+                    <span className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'>
+                        <GoTrash size={25} />
+                    </span>
+                </div>
+            )}
         </div>
     )
 }

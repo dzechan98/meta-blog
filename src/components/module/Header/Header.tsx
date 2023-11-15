@@ -4,7 +4,10 @@ import Logo from '../../common/Logo'
 import { useAuth } from '../../../contexts/auth-context'
 import Avatar from '../../common/Avatar'
 import SearchInput from '../../common/SearchInput'
-import { getLastName, handleSignOut } from '../../../utils/fn'
+import { getLastName } from '../../../utils/fn'
+import Swal from 'sweetalert2'
+import { signOut } from 'firebase/auth'
+import { auth } from '../../../config/firebase'
 
 const menuHeader = [
     { key: 0, title: 'Home', path: '/' },
@@ -19,7 +22,21 @@ const notActive =
 
 const Header = () => {
     const { userInfo } = useAuth()
-    console.log(userInfo)
+    const handleSignOut = (): void => {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, Sign out!!!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                signOut(auth)
+            }
+        })
+    }
 
     return (
         <header className='w-full'>

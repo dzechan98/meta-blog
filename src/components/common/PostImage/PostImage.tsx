@@ -1,4 +1,9 @@
-const PostImage = ({ imageURL, className = 'h-full' }: { imageURL: string; className?: string }) => {
+interface IPostImageProps {
+    imageURL: string
+    className?: string
+}
+
+const PostImage = ({ imageURL, className = '' }: IPostImageProps) => {
     return (
         <img
             src={imageURL}

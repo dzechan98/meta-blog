@@ -1,11 +1,12 @@
+import './index.css'
 import React from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
 import App from './App'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
 import AuthProvider from './contexts/auth-context'
+import 'react-toastify/dist/ReactToastify.css'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
