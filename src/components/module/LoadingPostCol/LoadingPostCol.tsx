@@ -1,7 +1,13 @@
-const LoadingPostSkeleton = () => {
+interface ILoadingPostColProps {
+    heightImage?: number
+}
+
+const LoadingPostCol = ({ heightImage = 260 }: ILoadingPostColProps) => {
     return (
-        <div role='status' className='max-w-sm p-2 border bg-light rounded-lg shadow animate-pulse md:p-4'>
-            <div className='flex items-center justify-center h-48 mb-4 bg-gray-300 rounded dark:bg-gray-700'>
+        <div role='status' className='w-full p-2 border bg-light rounded-lg shadow animate-pulse md:p-4'>
+            <div
+                className={`flex items-center justify-center h-[${heightImage}px] mb-4 bg-gray-300 rounded dark:bg-gray-700`}
+            >
                 <svg
                     className='w-10 h-10 text-gray-200 dark:text-gray-600'
                     aria-hidden='true'
@@ -13,10 +19,10 @@ const LoadingPostSkeleton = () => {
                     <path d='M5 5V.13a2.96 2.96 0 0 0-1.293.749L.879 3.707A2.98 2.98 0 0 0 .13 5H5Z' />
                 </svg>
             </div>
-            <div className='h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4' />
-            <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5' />
-            <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5' />
-            <div className='h-2 bg-gray-200 rounded-full dark:bg-gray-700' />
+            <div className={`h-3 bg-gray-200 rounded-full dark:bg-gray-700 w-48 mb-4`} />
+            <div className={`h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5`} />
+            <div className={`h-2.5 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5`} />
+            <div className={`h-2.5 bg-gray-200 rounded-full dark:bg-gray-700`} />
             <div className='flex items-center mt-4'>
                 <svg
                     className='w-10 h-10 me-3 text-gray-200 dark:text-gray-700'
@@ -37,4 +43,4 @@ const LoadingPostSkeleton = () => {
     )
 }
 
-export default LoadingPostSkeleton
+export default LoadingPostCol

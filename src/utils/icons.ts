@@ -4,7 +4,7 @@ import { TbLogout } from 'react-icons/tb'
 import { RiContactsLine } from 'react-icons/ri'
 import { IoIosSearch } from 'react-icons/io'
 import { BsEyeSlash } from 'react-icons/bs'
-import { BiPencil } from 'react-icons/bi'
+import { BiPencil, BiCategory } from 'react-icons/bi'
 
 export {
     AiOutlinePlusCircle,
@@ -17,5 +17,6 @@ export {
     BsEyeSlash,
     BiPencil,
     AiOutlineLike,
-    AiFillLike
+    AiFillLike,
+    BiCategory
 }

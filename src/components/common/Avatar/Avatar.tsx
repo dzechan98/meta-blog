@@ -10,7 +10,7 @@ interface IAvatarProps {
 const avatar = cva('cursor-pointer relative', {
     variants: {
         size: {
-            medium: 'w-8 h-8',
+            medium: 'w-10 h-10',
             large: 'w-12 h-12'
         }
     }

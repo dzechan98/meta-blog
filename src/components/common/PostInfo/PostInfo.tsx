@@ -7,11 +7,19 @@ interface IPostInfoProps {
     date?: number
     author: string
     avatar: string
+    sizeAvatar?: 'medium' | 'large'
     hideButtonLike?: boolean
     className?: string
 }
 
-const PostInfo = ({ avatar, date = 0, author, hideButtonLike = false, className }: IPostInfoProps) => {
+const PostInfo = ({
+    avatar,
+    date = 0,
+    author,
+    hideButtonLike = false,
+    sizeAvatar = 'large',
+    className
+}: IPostInfoProps) => {
     const [toggleButtonLike, setToggleButtonLike] = useState<boolean>(false)
     const handleToggleButtonLike = () => {
         setToggleButtonLike(!toggleButtonLike)
@@ -19,7 +27,7 @@ const PostInfo = ({ avatar, date = 0, author, hideButtonLike = false, className 
     return (
         <div className={`text-gray-500 text-sm flex items-center justify-between ${className}`}>
             <div className='flex items-center gap-2'>
-                <Avatar imageURL={avatar} size='large' />
+                <Avatar imageURL={avatar} size={sizeAvatar} />
                 <div className='flex flex-col'>
                     <span className='font-medium mr-1'>{author}</span>
                     <span>{moment(date * 1000).format('MMMM DD, YYYY')}</span>

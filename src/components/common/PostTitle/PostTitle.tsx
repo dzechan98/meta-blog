@@ -8,7 +8,7 @@ interface IPostTitleProps {
 }
 
 const PostTitle = ({ size = 'medium', lineCamp = 'medium', className, children }: IPostTitleProps) => {
-    const title = cva(`font-semibold text-gray-dark break-words line-clamp-4 ${className}`, {
+    const title = cva(`w-full font-semibold text-gray-dark break-words ${className}`, {
         variants: {
             size: {
                 base: 'text-sm mb-2',

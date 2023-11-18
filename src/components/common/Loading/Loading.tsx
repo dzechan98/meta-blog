@@ -1,7 +1,7 @@
 import { cva } from 'class-variance-authority'
 
 interface ILoadingProps {
-    size?: 'medium' | 'large'
+    size?: 'small' | 'medium' | 'large'
     border?: 'light' | 'primary'
 }
 
@@ -12,6 +12,7 @@ const loading = cva('border-[4px] border-t-transparent rounded-[50%] inline-bloc
             light: 'border-light'
         },
         size: {
+            small: 'w-6 h-6',
             medium: 'w-8 h-8',
             large: 'w-12 h-12'
         }

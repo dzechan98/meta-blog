@@ -27,16 +27,17 @@ export interface IPostProps {
         seconds: number
     }
     hideButtonLike?: boolean
+    handleDeletePost?: (postId: string) => void
 }
 
-const post = cva('flex gap-4 w-full', {
+const post = cva('flex w-full h-full', {
     variants: {
         isBorder: {
             true: 'p-4 rounded-lg border border-dark-light'
         },
         direction: {
             row: 'flex-row',
-            col: 'flex-col'
+            col: 'flex-col justify-between'
         },
         backgroundColor: {
             dark: 'p-4 rounded-lg bg-dark',
@@ -63,46 +64,65 @@ const Post = ({
     action = false,
     postId,
     createdAt,
-    hideButtonLike
+    hideButtonLike,
+    handleDeletePost = () => {}
 }: IPostProps) => {
     const navigate = useNavigate()
     return (
         <div className={post({ isBorder, direction, backgroundColor })}>
-            <div className={`overflow-hidden flex-shrink-0 rounded-md ${widthImage} ${heightImage}`}>
-                <PostImage imageURL={imageURL} className='hover:scale-110' />
+            <div className={direction === 'row' ? 'flex gap-2' : 'gap-2 flex flex-col'}>
+                <div className={`overflow-hidden flex-shrink-0 rounded-md ${widthImage} ${heightImage}`}>
+                    <PostImage imageURL={imageURL} className='hover:scale-110' />
+                </div>
+                <div className='w-full'>
+                    <Category size={sizeCategory} categoryId={categoryId} />
+                    <PostTitle size={sizeTitle} lineCamp={lineCamp}>
+                        {title}
+                    </PostTitle>
+                    {direction === 'row' && (
+                        <PostInfo
+                            author={author}
+                            avatar={avatar}
+                            sizeAvatar='medium'
+                            date={createdAt?.seconds}
+                            hideButtonLike={hideButtonLike}
+                        />
+                    )}
+                </div>
             </div>
-
-            <div className={''}>
-                <Category size={sizeCategory} categoryId={categoryId} />
-                <PostTitle size={sizeTitle} lineCamp={lineCamp}>
-                    {title}
-                </PostTitle>
-                {!hidePostInfo && (
+            {!hidePostInfo && (
+                <div className='wrap'>
                     <PostInfo
                         author={author}
                         avatar={avatar}
                         date={createdAt?.seconds}
                         hideButtonLike={hideButtonLike}
                     />
-                )}
-            </div>
-            {action && (
-                <div className='flex items-center justify-center gap-2'>
-                    <span
-                        className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
-                        onClick={() => navigate(`/post/${postId}`)}
-                    >
-                        <BsEyeSlash size={25} />
-                    </span>
-                    <span
-                        className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
-                        onClick={() => navigate(`/dashboard/my-post/update/${postId}`)}
-                    >
-                        <BiPencil size={25} />
-                    </span>
-                    <span className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'>
-                        <GoTrash size={25} />
-                    </span>
+                    {action && (
+                        <div className='flex items-center gap-2'>
+                            <span
+                                className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
+                                onClick={() => navigate(`/post/${postId}`)}
+                            >
+                                <BsEyeSlash size={25} />
+                            </span>
+                            <span
+                                className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
+                                onClick={() => navigate(`/dashboard/my-post/update/${postId}`)}
+                            >
+                                <BiPencil size={25} />
+                            </span>
+                            <span
+                                className='p-3 hover:bg-primary hover:text-light transition-all rounded-[50%] cursor-pointer'
+                                onClick={() => {
+                                    console.log(postId)
+                                    handleDeletePost(String(postId))
+                                }}
+                            >
+                                <GoTrash size={25} />
+                            </span>
+                        </div>
+                    )}
                 </div>
             )}
         </div>

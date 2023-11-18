@@ -19,10 +19,10 @@ const UserDashboardLayout = () => {
 
     return (
         <div className='w-full'>
-            <div className='fixed w-[200px] z-[99]'>
+            <div className='fixed w-[240px] z-[99]'>
                 <Sidebar />
             </div>
-            <div className='relative min-h-screen max-w-[calc(100%-200px)] left-[200px] py-6 px-4 flex-auto bg-gray-400'>
+            <div className='relative min-h-screen max-w-[calc(100%-240px)] left-[240px] py-6 px-4 flex-auto bg-gray-400'>
                 <div className='w-full flex items-center justify-between mb-10'>
                     <SearchInput placeholder='Search posts...' position='left' className='w-[300px]' />
                     {userInfo && (

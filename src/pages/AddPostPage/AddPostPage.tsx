@@ -5,7 +5,7 @@ import Input from '../../components/common/Input'
 import Label from '../../components/common/Label'
 import Textarea from '../../components/common/Textarea'
 import Select from 'react-select'
-import { DocumentData, QueryDocumentSnapshot, addDoc, collection, getDocs, serverTimestamp } from 'firebase/firestore'
+import { addDoc, collection, onSnapshot, serverTimestamp } from 'firebase/firestore'
 import { db } from '../../config/firebase'
 import UploadImage from '../../components/common/UploadImage'
 import Button from '../../components/common/Button'
@@ -14,6 +14,8 @@ import * as Yup from 'yup'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 import { toast } from 'react-toastify'
 import { useAuth } from '../../contexts/auth-context'
+import { capitalizeFirstLetterOfEachWord } from '../../utils/fn'
+import { useCategory } from '../../contexts/category-context'
 
 interface OptionType {
     id: string
@@ -37,6 +39,7 @@ const validationSchema = Yup.object({
 
 const AddPostPage = () => {
     const { userInfo } = useAuth()
+    const { checkAddCategory } = useCategory()
     const [category, setCategory] = useState<OptionType | null>(null)
     const [options, setOptions] = useState<OptionType[]>([] as OptionType[])
     const [imageURL, setImageURL] = useState<string>('')
@@ -131,18 +134,20 @@ const AddPostPage = () => {
     useEffect(() => {
         const getCategories = async () => {
             const optionData: OptionType[] = []
-            try {
-                const querySnapshot = await getDocs(collection(db, 'categories'))
-                querySnapshot.forEach((doc: QueryDocumentSnapshot<DocumentData, DocumentData>) => {
-                    optionData.push({ id: doc.id, label: doc.data().name, value: doc.data().name })
+            onSnapshot(collection(db, 'categories'), (snapshot) => {
+                snapshot.forEach((doc) => {
+                    optionData.push({
+                        id: doc.id,
+                        label: capitalizeFirstLetterOfEachWord(doc.data().name),
+                        value: capitalizeFirstLetterOfEachWord(doc.data().name)
+                    })
                 })
-                setOptions(optionData)
-            } catch (error) {
-                console.log(error)
-            }
+            })
+            setOptions(optionData)
         }
         getCategories()
-    }, [])
+    }, [checkAddCategory])
+
     return (
         <section className='w-full mb-10'>
             <Heading className='mb-6'>Add new post</Heading>

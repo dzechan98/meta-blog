@@ -5,6 +5,7 @@ import App from './App'
 import { BrowserRouter as Router } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import AuthProvider from './contexts/auth-context'
+import CategoryProvider from './contexts/category-context'
 import 'react-toastify/dist/ReactToastify.css'
 import 'react-loading-skeleton/dist/skeleton.css'
 
@@ -13,7 +14,9 @@ root.render(
     <React.StrictMode>
         <Router>
             <AuthProvider>
-                <App />
+                <CategoryProvider>
+                    <App />
+                </CategoryProvider>
             </AuthProvider>
         </Router>
         <ToastContainer />

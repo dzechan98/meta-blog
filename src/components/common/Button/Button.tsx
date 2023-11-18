@@ -5,9 +5,10 @@ import Loading from '../Loading'
 interface IButtonProps {
     to?: string
     type?: 'button' | 'submit' | 'reset'
-    intent?: 'primary' | 'outline' | 'light'
+    intent?: 'primary' | 'outline' | 'light' | 'warning'
     size?: 'small' | 'medium' | 'large'
     rounded?: 'sm' | 'md' | 'lg'
+    sizeLoading?: 'small' | 'medium' | 'large'
     loading?: boolean
     disabled?: boolean
     className?: string
@@ -25,6 +26,7 @@ const Button = ({
     disabled,
     size = 'medium',
     className,
+    sizeLoading = 'medium',
     children
 }: IButtonProps) => {
     const button = cva(
@@ -34,6 +36,7 @@ const Button = ({
                 intent: {
                     primary: 'bg-gradient-to-r from-primary to-secondary text-white',
                     light: 'bg-light text-primary',
+                    warning: 'bg-[#d33] text-light',
                     outline:
                         'shadow-lg shadow-primary border-primary border text-primary hover:bg-primary hover:text-light'
                 },
@@ -66,7 +69,7 @@ const Button = ({
     }
     return (
         <button type={type} onClick={onClick} className={button({ size, intent, rounded, disabled })}>
-            {loading && <Loading />}
+            {loading && <Loading size={sizeLoading} />}
             {!loading && children}
         </button>
     )
