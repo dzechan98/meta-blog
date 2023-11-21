@@ -27,6 +27,8 @@ export interface IPostProps {
         seconds: number
     }
     hideButtonLike?: boolean
+    content?: string
+    featured?: boolean
     handleDeletePost?: (postId: string) => void
 }
 
@@ -72,7 +74,7 @@ const Post = ({
         <div className={post({ isBorder, direction, backgroundColor })}>
             <div className={direction === 'row' ? 'flex gap-2' : 'gap-2 flex flex-col'}>
                 <div className={`overflow-hidden flex-shrink-0 rounded-md ${widthImage} ${heightImage}`}>
-                    <PostImage imageURL={imageURL} className='hover:scale-110' />
+                    <PostImage imageURL={imageURL} className='hover:scale-110' to={`/post/${postId}`} />
                 </div>
                 <div className='w-full'>
                     <Category size={sizeCategory} categoryId={categoryId} />

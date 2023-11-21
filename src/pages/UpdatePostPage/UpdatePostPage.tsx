@@ -1,136 +1,65 @@
-import { useEffect, useState } from 'react'
-import Field from '../../components/common/Field'
+import { useState, useEffect, useRef } from 'react'
 import Heading from '../../components/common/Heading'
-import Input from '../../components/common/Input'
+import Field from '../../components/common/Field'
 import Label from '../../components/common/Label'
+import Input from '../../components/common/Input'
 import Select from 'react-select'
-import { addDoc, collection, onSnapshot, serverTimestamp } from 'firebase/firestore'
-import { db } from '../../config/firebase'
-import UploadImage from '../../components/common/UploadImage'
-import Button from '../../components/common/Button'
+import { OptionType } from '../AddPostPage/AddPostPage'
+import TextEditor from '../../components/common/TextEditor'
 import { useFormik } from 'formik'
 import * as Yup from 'yup'
-import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
-import { toast } from 'react-toastify'
-import { useAuth } from '../../contexts/auth-context'
+import { collection, doc, getDoc, onSnapshot, updateDoc } from 'firebase/firestore'
+import { db } from '../../config/firebase'
 import { capitalizeFirstLetterOfEachWord } from '../../utils/fn'
 import { useCategory } from '../../contexts/category-context'
-import TextEditor from '../../components/common/TextEditor'
-
-export interface OptionType {
-    id: string
-    label: string
-    value: string
-}
-
-interface FormDataAddPost {
-    title: string
-    categoryId: string
-    content: string
-    imageURL: string
-    featured: boolean
-}
+import { useNavigate, useParams } from 'react-router-dom'
+import Button from '../../components/common/Button'
+import { IPostProps } from '../../components/common/Post/Post'
+import { toast } from 'react-toastify'
 
 const validationSchema = Yup.object({
     title: Yup.string().required('Please enter the title for the new post'),
-    categoryId: Yup.string(),
     content: Yup.string(),
-    imageURL: Yup.string(),
+    categoryId: Yup.string(),
     featured: Yup.boolean()
 })
 
-const AddPostPage = () => {
-    const { userInfo } = useAuth()
+const UpdatePostPage = () => {
+    const { postId } = useParams()
+    const navigate = useNavigate()
     const { checkAddCategory } = useCategory()
     const [category, setCategory] = useState<OptionType | null>(null)
     const [options, setOptions] = useState<OptionType[]>([] as OptionType[])
-    const [imageURL, setImageURL] = useState<string>('')
-    const [removeImage, setRemoveImage] = useState<boolean>(false)
-    const [fileName, setFileName] = useState<string>('')
-    const [checked, setChecked] = useState<boolean>(false)
-    const [progressUpload, setProgressUpload] = useState<boolean>(false)
     const [content, setContent] = useState<string>('')
+    const [checked, setChecked] = useState<boolean>(false)
+    const selectedInputRef = useRef<any>(null)
     const formik = useFormik({
         initialValues: {
             title: '',
-            categoryId: '',
             content: '',
-            imageURL: '',
+            categoryId: '',
             featured: false
         },
         validationSchema,
-        onSubmit: async (values: FormDataAddPost, { resetForm }) => {
+        onSubmit: async (values) => {
             formik.values.content = String(content)
             formik.values.categoryId = String(category?.id)
-            formik.values.imageURL = String(imageURL)
             formik.values.featured = checked
             try {
-                await addDoc(collection(db, 'posts'), {
-                    ...values,
-                    avatar: userInfo?.photoURL,
-                    userId: userInfo?.uid,
-                    author: userInfo?.displayName,
-                    like: 0,
-                    createdAt: serverTimestamp()
+                await updateDoc(doc(db, 'posts', postId as string), {
+                    ...values
                 })
-                resetForm()
-                setContent('')
-                setChecked(false)
-                setImageURL('')
-                setCategory(null)
-                toast.success('Created new post successfully!!!')
+                toast.success('Update post successfully!!!')
+                navigate('/dashboard/my-post')
             } catch (error) {
                 console.log(error)
             }
+            console.log(values)
         }
     })
 
     const handleSelectedOption = (selected: OptionType | null) => {
         setCategory(selected)
-    }
-
-    const handleUploadImage = (file: File): void => {
-        const storage = getStorage()
-        const metadata = {
-            contentType: 'image/jpeg'
-        }
-        const storageRef = ref(storage, 'images/' + file.name)
-        setFileName(file.name)
-        const uploadTask = uploadBytesResumable(storageRef, file, metadata)
-        uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
-                console.log('Upload is ' + progress + '% done')
-                setProgressUpload(true)
-                switch (snapshot.state) {
-                    case 'paused':
-                        console.log('Upload is paused')
-                        break
-                    case 'running':
-                        console.log('Upload is running')
-                        break
-                }
-            },
-            (error) => {
-                switch (error.code) {
-                    case 'storage/unauthorized':
-                        break
-                    case 'storage/canceled':
-                        break
-                    case 'storage/unknown':
-                        break
-                }
-            },
-            () => {
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                    console.log('File available at', downloadURL)
-                    setRemoveImage(false)
-                    setProgressUpload(false)
-                    setImageURL(downloadURL)
-                })
-            }
-        )
     }
 
     const getErrorFieldName = (name: 'title') => {
@@ -139,7 +68,9 @@ const AddPostPage = () => {
         }
         return null
     }
+    console.log(checked)
 
+    //get Categories
     useEffect(() => {
         const getCategories = async () => {
             const optionData: OptionType[] = []
@@ -157,9 +88,37 @@ const AddPostPage = () => {
         getCategories()
     }, [checkAddCategory])
 
+    useEffect(() => {
+        const fetchPost = async () => {
+            try {
+                const docRef = doc(db, 'posts', postId as string)
+                const docSnap = await getDoc(docRef)
+                if (docSnap.exists()) {
+                    const data: IPostProps = docSnap.data() as IPostProps
+                    formik.values.title = data.title
+                    setContent(data.content as string)
+                    setChecked(data.featured as boolean)
+                    const docRefC = doc(db, 'categories', data.categoryId)
+                    const docSnapC = await getDoc(docRefC)
+                    if (docSnapC.exists()) {
+                        const currentCategory: OptionType = {
+                            id: docSnapC.id,
+                            label: capitalizeFirstLetterOfEachWord(docSnapC.data().name),
+                            value: capitalizeFirstLetterOfEachWord(docSnapC.data().name)
+                        }
+                        selectedInputRef.current.setValue(currentCategory)
+                    }
+                }
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        fetchPost()
+    }, [])
+
     return (
         <section className='w-full mb-10'>
-            <Heading className='mb-6'>Add new post</Heading>
+            <Heading className='mb-6'>Update Post</Heading>
             <form onSubmit={formik.handleSubmit}>
                 <div className='flex items-start gap-6 mb-10'>
                     <div className='w-1/2'>
@@ -200,32 +159,20 @@ const AddPostPage = () => {
                                         borderRadius: '6px'
                                     })
                                 }}
+                                ref={selectedInputRef}
                                 onChange={handleSelectedOption}
                                 placeholder='Select category for the new post'
                             />
                         </Field>
                         <Field>
-                            <Label htmlFor='upload_image'>Image</Label>
-                            <UploadImage
-                                imageURL={imageURL}
-                                removeImage={removeImage}
-                                fileName={fileName}
-                                progress={progressUpload}
-                                setRemoveImage={setRemoveImage}
-                                setImageURL={setImageURL}
-                                handleUploadImage={handleUploadImage}
-                            />
+                            <Label htmlFor='content'>Content</Label>
+                            <div className='w-full bg-light'>
+                                <TextEditor content={content} setContent={setContent} />
+                            </div>
                         </Field>
                     </div>
                 </div>
-                <div className='bg-light'>
-                    <Field>
-                        <Label htmlFor='content'>Content</Label>
-                        <div className='bg-light'>
-                            <TextEditor content={content} setContent={setContent} />
-                        </div>
-                    </Field>
-                </div>
+
                 <div className='flex items-center justify-center'>
                     <Button
                         type='submit'
@@ -233,7 +180,7 @@ const AddPostPage = () => {
                         loading={!!formik.isSubmitting}
                         disabled={!!(Object.keys(formik.errors).length || formik.isSubmitting) || !category}
                     >
-                        Add new post
+                        Update post
                     </Button>
                 </div>
             </form>
@@ -241,4 +188,4 @@ const AddPostPage = () => {
     )
 }
 
-export default AddPostPage
+export default UpdatePostPage

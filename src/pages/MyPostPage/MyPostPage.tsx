@@ -52,7 +52,6 @@ const MyPostPage = () => {
         }
         fetchDataMyPosts()
     }, [])
-    console.log(myPosts)
     return (
         <section className='w-full mb-10'>
             <Heading className='mb-6'>My Posts</Heading>

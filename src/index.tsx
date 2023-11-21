@@ -7,7 +7,7 @@ import { ToastContainer } from 'react-toastify'
 import AuthProvider from './contexts/auth-context'
 import CategoryProvider from './contexts/category-context'
 import 'react-toastify/dist/ReactToastify.css'
-import 'react-loading-skeleton/dist/skeleton.css'
+import "react-quill/dist/quill.snow.css";
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(

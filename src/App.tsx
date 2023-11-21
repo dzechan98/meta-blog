@@ -11,6 +11,7 @@ import AddPostPage from './pages/AddPostPage'
 import { signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
 import MyPostPage from './pages/MyPostPage'
+import UpdatePostPage from './pages/UpdatePostPage'
 
 function App() {
     useEffect(() => {
@@ -36,6 +37,7 @@ function App() {
                 <Route path='home' element={<DashboardPage />} />
                 <Route path='new-post' element={<AddPostPage />} />
                 <Route path='my-post' element={<MyPostPage />} />
+                <Route path='my-post/update/:postId' element={<UpdatePostPage />} />
             </Route>
         </Routes>
     )
