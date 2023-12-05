@@ -5,6 +5,7 @@ import PostImage from '../PostImage'
 import { cva } from 'class-variance-authority'
 import { GoTrash, BsEyeSlash, BiPencil } from '../../../utils/icons'
 import { useNavigate } from 'react-router-dom'
+import { capitalizeFirstLetterOfEachWord } from '../../../utils/fn'
 
 export interface IPostProps {
     imageURL: string
@@ -79,7 +80,7 @@ const Post = ({
                 <div className='w-full'>
                     <Category size={sizeCategory} categoryId={categoryId} />
                     <PostTitle size={sizeTitle} lineCamp={lineCamp}>
-                        {title}
+                        {capitalizeFirstLetterOfEachWord(title.toLowerCase())}
                     </PostTitle>
                     {direction === 'row' && (
                         <PostInfo

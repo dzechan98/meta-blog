@@ -10,7 +10,6 @@ import { getLastName } from '../../utils/fn'
 const UserDashboardLayout = () => {
     const { userInfo } = useAuth()
     const navigate = useNavigate()
-    console.log(userInfo)
     useEffect(() => {
         if (!userInfo) {
             navigate('/')

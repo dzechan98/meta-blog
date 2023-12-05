@@ -12,6 +12,7 @@ import { signOut } from 'firebase/auth'
 import { auth } from './config/firebase'
 import MyPostPage from './pages/MyPostPage'
 import UpdatePostPage from './pages/UpdatePostPage'
+import SearchPage from './pages/SearchPage'
 
 function App() {
     useEffect(() => {
@@ -30,6 +31,7 @@ function App() {
             <Route path='/' element={<DefaultLayout />}>
                 <Route path='/' element={<HomePage />} />
                 <Route path='/post/:postId' element={<SinglePostPage />} />
+                <Route path='/search' element={<SearchPage />} />
             </Route>
             <Route path='/sign-up' element={<SignUpPage />} />
             <Route path='/sign-in' element={<SignInPage />} />

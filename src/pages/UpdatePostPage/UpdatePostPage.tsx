@@ -16,12 +16,16 @@ import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../../components/common/Button'
 import { IPostProps } from '../../components/common/Post/Post'
 import { toast } from 'react-toastify'
+import ToggleCheckbox from '../../components/common/ToggleCheckbox'
+import UploadImage from '../../components/common/UploadImage'
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from 'firebase/storage'
 
 const validationSchema = Yup.object({
     title: Yup.string().required('Please enter the title for the new post'),
     content: Yup.string(),
     categoryId: Yup.string(),
-    featured: Yup.boolean()
+    featured: Yup.boolean(),
+    imageURL: Yup.string()
 })
 
 const UpdatePostPage = () => {
@@ -32,22 +36,30 @@ const UpdatePostPage = () => {
     const [options, setOptions] = useState<OptionType[]>([] as OptionType[])
     const [content, setContent] = useState<string>('')
     const [checked, setChecked] = useState<boolean>(false)
+    const [imageURL, setImageURL] = useState<string>('')
+    const [removeImage, setRemoveImage] = useState<boolean>(false)
+    const [fileName, setFileName] = useState<string>('')
+    const [progressUpload, setProgressUpload] = useState<boolean>(false)
+
     const selectedInputRef = useRef<any>(null)
     const formik = useFormik({
         initialValues: {
             title: '',
             content: '',
             categoryId: '',
-            featured: false
+            featured: false,
+            imageURL: ''
         },
         validationSchema,
         onSubmit: async (values) => {
             formik.values.content = String(content)
             formik.values.categoryId = String(category?.id)
             formik.values.featured = checked
+            formik.values.imageURL = imageURL
             try {
                 await updateDoc(doc(db, 'posts', postId as string), {
-                    ...values
+                    ...values,
+                    title: values.title.toLowerCase()
                 })
                 toast.success('Update post successfully!!!')
                 navigate('/dashboard/my-post')
@@ -68,7 +80,50 @@ const UpdatePostPage = () => {
         }
         return null
     }
-    console.log(checked)
+
+    const handleUploadImage = (file: File): void => {
+        const storage = getStorage()
+        const metadata = {
+            contentType: 'image/jpeg'
+        }
+        const storageRef = ref(storage, 'images/' + file.name)
+        setFileName(file.name)
+        const uploadTask = uploadBytesResumable(storageRef, file, metadata)
+        uploadTask.on(
+            'state_changed',
+            (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+                console.log('Upload is ' + progress + '% done')
+                setProgressUpload(true)
+                switch (snapshot.state) {
+                    case 'paused':
+                        console.log('Upload is paused')
+                        break
+                    case 'running':
+                        console.log('Upload is running')
+                        break
+                }
+            },
+            (error) => {
+                switch (error.code) {
+                    case 'storage/unauthorized':
+                        break
+                    case 'storage/canceled':
+                        break
+                    case 'storage/unknown':
+                        break
+                }
+            },
+            () => {
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    console.log('File available at', downloadURL)
+                    setRemoveImage(false)
+                    setProgressUpload(false)
+                    setImageURL(downloadURL)
+                })
+            }
+        )
+    }
 
     //get Categories
     useEffect(() => {
@@ -98,6 +153,7 @@ const UpdatePostPage = () => {
                     formik.values.title = data.title
                     setContent(data.content as string)
                     setChecked(data.featured as boolean)
+                    setImageURL(data.imageURL)
                     const docRefC = doc(db, 'categories', data.categoryId)
                     const docSnapC = await getDoc(docRefC)
                     if (docSnapC.exists()) {
@@ -134,16 +190,7 @@ const UpdatePostPage = () => {
                             />
                         </Field>
                         <div className='flex items-center gap-2'>
-                            <input
-                                type='checkbox'
-                                id='featured'
-                                className='w-5 h-5'
-                                checked={checked}
-                                onChange={() => {
-                                    setChecked(!checked)
-                                }}
-                            />
-                            <Label htmlFor='featured'>Featured post</Label>
+                            <ToggleCheckbox label='Featured post' checked={checked} setChecked={setChecked} />
                         </div>
                     </div>
                     <div className='w-1/2'>
@@ -165,14 +212,28 @@ const UpdatePostPage = () => {
                             />
                         </Field>
                         <Field>
-                            <Label htmlFor='content'>Content</Label>
-                            <div className='w-full bg-light'>
-                                <TextEditor content={content} setContent={setContent} />
-                            </div>
+                            <Label htmlFor='upload_image'>Image</Label>
+                            <UploadImage
+                                imageURL={imageURL}
+                                removeImage={removeImage}
+                                fileName={fileName}
+                                progress={progressUpload}
+                                setRemoveImage={setRemoveImage}
+                                noDeleteImage
+                                setImageURL={setImageURL}
+                                handleUploadImage={handleUploadImage}
+                            />
                         </Field>
                     </div>
                 </div>
-
+                <div className='mb-10'>
+                    <Field>
+                        <Label htmlFor='content'>Content</Label>
+                        <div className='w-full bg-light'>
+                            <TextEditor content={content} setContent={setContent} />
+                        </div>
+                    </Field>
+                </div>
                 <div className='flex items-center justify-center'>
                     <Button
                         type='submit'

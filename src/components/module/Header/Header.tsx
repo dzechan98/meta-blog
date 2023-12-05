@@ -1,9 +1,8 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 import Button from '../../common/Button'
 import Logo from '../../common/Logo'
 import { useAuth } from '../../../contexts/auth-context'
 import Avatar from '../../common/Avatar'
-import SearchInput from '../../common/SearchInput'
 import { getLastName } from '../../../utils/fn'
 import Swal from 'sweetalert2'
 import { signOut } from 'firebase/auth'
@@ -11,7 +10,7 @@ import { auth } from '../../../config/firebase'
 
 const menuHeader = [
     { key: 0, title: 'Home', path: '/' },
-    { key: 1, title: 'Blog', path: '/blog' },
+    { key: 1, title: 'Search', path: '/search' },
     { key: 2, title: 'About', path: '/about' }
 ]
 
@@ -22,6 +21,15 @@ const notActive =
 
 const Header = () => {
     const { userInfo } = useAuth()
+    const navigate = useNavigate()
+
+    const handleClickWriteNewPost = () => {
+        if (userInfo) {
+            navigate('/dashboard/new-post')
+        } else {
+            navigate('/sign-in')
+        }
+    }
     const handleSignOut = (): void => {
         Swal.fire({
             title: 'Are you sure?',
@@ -58,7 +66,9 @@ const Header = () => {
                         </ul>
                     </div>
                     <div className='flex items-center gap-x-4'>
-                        <SearchInput placeholder='Search posts...' />
+                        <Button rounded='md' onClick={handleClickWriteNewPost}>
+                            Write new post
+                        </Button>
                         {userInfo && (
                             <div className='flex items-center gap-3'>
                                 <div className='flex items-center gap-1'>

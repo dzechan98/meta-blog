@@ -36,11 +36,12 @@ img {
 
 .content p img {
     width: 100%;
-    max-height: 500px;
+    max-height: 600px;
     object-fit: cover;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
+    border-radius: 6px;
 }
 
 .content p {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }

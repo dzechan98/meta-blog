@@ -2,16 +2,21 @@ import { useEffect, useState } from 'react'
 import Heading from '../../components/common/Heading'
 import Post from '../../components/common/Post'
 import { useAuth } from '../../contexts/auth-context'
-import { collection, deleteDoc, doc, onSnapshot, query, where } from 'firebase/firestore'
+import { collection, deleteDoc, doc, limit, onSnapshot, query, startAfter, where } from 'firebase/firestore'
 import { db } from '../../config/firebase'
 import { IPostProps } from '../../components/common/Post/Post'
 import Swal from 'sweetalert2'
 import LoadingPostCol from '../../components/module/LoadingPostCol'
+import Button from '../../components/common/Button'
 
 const MyPostPage = () => {
     const { userInfo } = useAuth()
     const [loading, setLoading] = useState<boolean>(true)
     const [myPosts, setMyPosts] = useState<IPostProps[]>([] as IPostProps[])
+    const [next, setNext] = useState<boolean>(false)
+    const [disable, setDisable] = useState<boolean>(false)
+    const [toggle, setToggle] = useState<boolean>(false)
+    const [lastVisible, setLastVisible] = useState<any>()
 
     const handleDeletePost = (postId: string) => {
         Swal.fire({
@@ -36,10 +41,19 @@ const MyPostPage = () => {
 
     useEffect(() => {
         const fetchDataMyPosts = async () => {
-            const qPost = query(collection(db, 'posts'), where('userId', '==', userInfo?.uid))
-
+            setLoading(true)
+            let qPost = query(collection(db, 'posts'), where('userId', '==', userInfo?.uid), limit(3))
+            if (next) {
+                qPost = query(
+                    collection(db, 'posts'),
+                    where('userId', '==', userInfo?.uid),
+                    startAfter(lastVisible),
+                    limit(3)
+                )
+            }
             onSnapshot(qPost, (querySnapshot) => {
                 const myPostsData: IPostProps[] = []
+                setLastVisible(querySnapshot.docs[querySnapshot.docs.length - 1])
                 querySnapshot.forEach((docPost) => {
                     myPostsData.push({
                         postId: docPost.id,
@@ -47,40 +61,71 @@ const MyPostPage = () => {
                     })
                 })
                 setLoading(false)
-                setMyPosts(myPostsData)
+                setMyPosts([...myPosts, ...myPostsData])
             })
         }
         fetchDataMyPosts()
-    }, [])
+    }, [toggle])
+
+    useEffect(() => {
+        if (next) {
+            if (!lastVisible) {
+                setDisable(true)
+            }
+        }
+    }, [lastVisible])
+
     return (
         <section className='w-full mb-10'>
             <Heading className='mb-6'>My Posts</Heading>
-            <div className='grid grid-cols-3 gap-4'>
-                {!loading &&
-                    myPosts.length > 0 &&
-                    myPosts.map((post: IPostProps) => (
-                        <Post
-                            {...post}
-                            key={post.postId}
-                            backgroundColor='light'
-                            lineCamp='base'
-                            heightImage='h-[260px]'
-                            hideButtonLike
-                            action
-                            handleDeletePost={handleDeletePost}
-                        />
-                    ))}
-                {loading && (
-                    <>
-                        <LoadingPostCol />
-                        <LoadingPostCol />
-                        <LoadingPostCol />
-                        <LoadingPostCol />
-                        <LoadingPostCol />
-                        <LoadingPostCol />
-                    </>
-                )}
-            </div>
+            {myPosts.length > 0 && (
+                <>
+                    <div className='grid grid-cols-3 gap-4 mb-10'>
+                        {myPosts?.map((post) => (
+                            <Post
+                                {...post}
+                                key={post.postId}
+                                backgroundColor='light'
+                                lineCamp='base'
+                                heightImage='h-[260px]'
+                                hideButtonLike
+                                action
+                                handleDeletePost={handleDeletePost}
+                            />
+                        ))}
+                        {loading && (
+                            <>
+                                <LoadingPostCol />
+                                <LoadingPostCol />
+                                <LoadingPostCol />
+                            </>
+                        )}
+                    </div>
+                    <div className='flex items-center justify-center'>
+                        <Button
+                            intent='outline'
+                            onClick={() => {
+                                setNext(true)
+                                setToggle(!toggle)
+                            }}
+                            disabled={disable}
+                        >
+                            Load More
+                        </Button>
+                    </div>
+                </>
+            )}
+            {loading && myPosts.length === 0 && (
+                <div className='grid grid-cols-3 gap-4 mb-10'>
+                    <LoadingPostCol />
+                    <LoadingPostCol />
+                    <LoadingPostCol />
+                    <LoadingPostCol />
+                    <LoadingPostCol />
+                    <LoadingPostCol />
+                </div>
+            )}
+
             {!loading && myPosts.length === 0 && (
                 <h2 className='text-4xl text-primary font-bold text-center'>My posts is empty</h2>
             )}

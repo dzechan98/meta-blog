@@ -5,12 +5,12 @@ import LoadingPostCol from '../../components/module/LoadingPostCol'
 import useGetPostList from '../../hooks/useGetPostList'
 
 const DashboardPage = () => {
-    const { postList, loading } = useGetPostList()
+    const { postList, loading, index, setIndex, setNext, disable } = useGetPostList()
 
     return (
         <section className='mb-10'>
             <Heading className='mb-5'>All post</Heading>
-            {!loading && postList.length > 0 && (
+            {postList.length > 0 && (
                 <>
                     <div className='grid grid-cols-3 gap-4 mb-10'>
                         {postList?.map((post) => (
@@ -22,14 +22,30 @@ const DashboardPage = () => {
                                 lineCamp='base'
                             />
                         ))}
+                        {loading && (
+                            <>
+                                <LoadingPostCol />
+                                <LoadingPostCol />
+                                <LoadingPostCol />
+                            </>
+                        )}
                     </div>
                     <div className='flex items-center justify-center'>
-                        <Button intent='outline'>Load more</Button>
+                        <Button
+                            intent='outline'
+                            disabled={disable}
+                            onClick={() => {
+                                setIndex(index + 3)
+                                setNext(true)
+                            }}
+                        >
+                            Load more
+                        </Button>
                     </div>
                 </>
             )}
 
-            {loading && (
+            {loading && postList.length === 0 && (
                 <div className='grid grid-cols-3 gap-4 mb-10'>
                     <LoadingPostCol />
                     <LoadingPostCol />

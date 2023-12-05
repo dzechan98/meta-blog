@@ -16,6 +16,7 @@ import { useAuth } from '../../contexts/auth-context'
 import { capitalizeFirstLetterOfEachWord } from '../../utils/fn'
 import { useCategory } from '../../contexts/category-context'
 import TextEditor from '../../components/common/TextEditor'
+import ToggleCheckbox from '../../components/common/ToggleCheckbox'
 
 export interface OptionType {
     id: string
@@ -175,16 +176,7 @@ const AddPostPage = () => {
                             />
                         </Field>
                         <div className='flex items-center gap-2'>
-                            <input
-                                type='checkbox'
-                                id='featured'
-                                className='w-5 h-5'
-                                checked={checked}
-                                onChange={() => {
-                                    setChecked(!checked)
-                                }}
-                            />
-                            <Label htmlFor='featured'>Featured post</Label>
+                            <ToggleCheckbox label='Featured post' checked={checked} setChecked={setChecked} />
                         </div>
                     </div>
                     <div className='w-1/2'>
@@ -218,7 +210,7 @@ const AddPostPage = () => {
                         </Field>
                     </div>
                 </div>
-                <div className='bg-light'>
+                <div className='bg-light mb-10'>
                     <Field>
                         <Label htmlFor='content'>Content</Label>
                         <div className='bg-light'>

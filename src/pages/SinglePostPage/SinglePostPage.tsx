@@ -66,10 +66,22 @@ const SinglePostPage = () => {
                             author={post?.author}
                             date={post?.createdAt?.seconds}
                         />
-                        <PostImage imageURL={post?.imageURL} height='max-h-[600px]' className='mb-10' />
-                        {post?.content && <div className='w full content'>{parse(String(post.content))}</div>}
+                        <div className='flex items-center justify-center'>
+                            <PostImage
+                                imageURL={post?.imageURL}
+                                height='max-h-[300px] sm:max-h-[450px] lg:max-h-[600px]'
+                                width='w-full sm:w-[90%]'
+                                className='mb-2.5'
+                            />
+                        </div>
+                        {post?.content && <div className='w-full content'>{parse(String(post.content))}</div>}
                     </section>
-                    {listPostRelated.length > 0 && <PostList heading='Related Post' listPosts={listPostRelated} />}
+                    {listPostRelated.length > 0 && (
+                        <PostList
+                            heading='Related Post'
+                            listPosts={listPostRelated.filter((p) => p.postId != post.postId)}
+                        />
+                    )}
                 </>
             )}
             {loading && <LoadingPostDetail />}

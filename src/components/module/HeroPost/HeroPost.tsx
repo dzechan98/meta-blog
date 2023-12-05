@@ -33,7 +33,7 @@ const HeroPost = () => {
                 postList.length > 0 &&
                 postList.map((post) => (
                     <div className='relative w-full duration-300' key={post.postId}>
-                        <PostImage imageURL={post?.imageURL} height='h-[480px]' />
+                        <PostImage imageURL={post?.imageURL} height='h-[480px]' to={`/post/${post.postId}`} />
                         <div className='absolute bg-light rounded-lg shadow-lg w-[400px] p-4 left-10 -bottom-10'>
                             <Category categoryId={post?.categoryId} />
                             <PostTitle size='large'>{post?.title}</PostTitle>

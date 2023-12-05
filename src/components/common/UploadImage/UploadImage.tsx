@@ -9,6 +9,7 @@ interface IUploadImageProps {
     removeImage: boolean
     fileName?: string | undefined
     progress: boolean
+    noDeleteImage?: boolean
     setImageURL: React.Dispatch<React.SetStateAction<string>>
     setRemoveImage: React.Dispatch<React.SetStateAction<boolean>>
     handleUploadImage: (file: File) => void
@@ -19,6 +20,7 @@ const UploadImage = ({
     fileName,
     removeImage,
     progress,
+    noDeleteImage = false,
     setImageURL,
     setRemoveImage,
     handleUploadImage
@@ -33,15 +35,20 @@ const UploadImage = ({
     const handleDeleteImage = (fileName: string | undefined) => {
         const storage = getStorage()
         const desertRef = ref(storage, 'images/' + fileName)
-        deleteObject(desertRef)
-            .then(() => {
-                // File deleted successfully
-                setImageURL('')
-                setRemoveImage(true)
-            })
-            .catch((error) => {
-                // Uh-oh, an error occurred!
-            })
+        if (!noDeleteImage) {
+            deleteObject(desertRef)
+                .then(() => {
+                    // File deleted successfully
+                    setImageURL('')
+                    setRemoveImage(true)
+                })
+                .catch((error) => {
+                    // Uh-oh, an error occurred!
+                })
+        } else {
+            setImageURL('')
+            setRemoveImage(true)
+        }
     }
 
     return (
@@ -62,7 +69,9 @@ const UploadImage = ({
                         <div className='absolute inset-0 flex items-center justify-center'>
                             <div
                                 className='bg-primary p-6 text-light rounded-full hidden group-hover:flex items-center justify-center cursor-pointer'
-                                onClick={() => handleDeleteImage(fileName)}
+                                onClick={() => {
+                                    handleDeleteImage(fileName)
+                                }}
                             >
                                 <GoTrash size={30} />
                             </div>
